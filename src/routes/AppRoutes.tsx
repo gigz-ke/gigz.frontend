@@ -1,0 +1,31 @@
+// src/routes/AppRoutes.tsx
+import { Routes, Route } from "react-router-dom";
+import Home from "../components/Home";
+import { CreateUserForm } from "../components/auth/CreateUserForm";
+import LoginPage from "../pages/LoginPage";
+import { ProfileSettings } from "../pages/ProfileSettingsPage";
+import { CategoryList } from "../components/categories/CategoryList";
+import { AddCategoryPage } from "../pages/AddCategoryPage";
+import { EditCategoryPage } from "../pages/EditCategoryPage";
+import { GigListPage } from "../pages/GigListPage";
+import { AddGigPage } from "../pages/AddGigPage";
+import { EditGigPage } from "../pages/EditGigPage";
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/join" element={<CreateUserForm />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/account" element={<ProfileSettings />} />
+      <Route path="/categories" element={<CategoryList />} />
+      <Route path="/categories/add" element={<AddCategoryPage />} />
+      <Route path="/categories/edit/:id" element={<EditCategoryPage />} />
+      <Route path="/gigs" element={<GigListPage />} />
+      <Route path="/gigs/add" element={<AddGigPage />} />
+      <Route path="/gigs/edit/:gigId" element={<EditGigPage />} />
+    </Routes>
+  );
+};
+
+export default AppRoutes;
