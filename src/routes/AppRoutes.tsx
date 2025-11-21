@@ -10,6 +10,7 @@ import { EditCategoryPage } from "../pages/EditCategoryPage";
 import { GigListPage } from "../pages/GigListPage";
 import { AddGigPage } from "../pages/AddGigPage";
 import { EditGigPage } from "../pages/EditGigPage";
+import { GigDetailsPage } from "../pages/GigDetailsPage";
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
       <Route path="/gigs" element={<GigListPage />} />
       <Route path="/gigs/add" element={<AddGigPage />} />
       <Route path="/gigs/edit/:gigId" element={<EditGigPage />} />
+      <Route path="/gigs/:id" element={<GigDetailsPage />} />
     </Routes>
   );
 };

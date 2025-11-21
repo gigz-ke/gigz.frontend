@@ -1,18 +1,24 @@
+import { useNavigate } from "react-router-dom";
 import type { Gig } from "../../data/models/Gig";
 
 interface GigCardProps {
   gig: Gig;
-  categoryName?: string; 
-  onClick?: (gigId: string) => void;
+  categoryName?: string;
 }
 
 const fallbackImage = "https://via.placeholder.com/600x400?text=No+Image";
 
-export default function GigCard({ gig, categoryName, onClick }: GigCardProps) {
+export default function GigCard({ gig, categoryName }: GigCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/gigs/${gig._id}`);
+  };
+
   return (
     <div
       className="group w-full max-w-sm bg-white rounded-xl border border-gray-200 hover:shadow-lg transition overflow-hidden cursor-pointer"
-      onClick={() => onClick?.(gig._id)}
+      onClick={handleClick}
     >
       {/* Thumbnail */}
       <div className="relative aspect-16/10 w-full bg-gray-100 overflow-hidden">

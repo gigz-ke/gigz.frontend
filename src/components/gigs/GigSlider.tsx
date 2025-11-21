@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useGigs } from "../../hooks/useGigs";
 import GigCard from "./GigCard";
-import { useCategory } from "../../hooks/useCategory"; // <-- import hook
+import { useCategory } from "../../hooks/useCategory"; 
 
 export default function GigsSlider() {
   const { gigs, fetchGigs } = useGigs();
-  const { categories } = useCategory(); // <-- get categories
+  const { categories } = useCategory(); 
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 

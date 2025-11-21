@@ -15,6 +15,11 @@ export const getUserByEmail = async (email: string): Promise<User> => {
   return res.data;
 };
 
+export const getUserById = async (id: string): Promise<User> => {
+  const res = await axios.get<User>(`${API_URL}/${id}`);
+  return res.data;
+};
+
 export const loginUser = async (data: LoginDTO): Promise<TokenResponse> => {
   const res = await axios.post<TokenResponse>(`${API_URL}/login`, data);
   return res.data;
