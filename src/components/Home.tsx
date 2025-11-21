@@ -1,8 +1,18 @@
 import GigsSlider from "./gigs/GigSlider";
 import Hero from "./Hero";
 import TrustedBy from "./TrustedBy";
+import { useCategory } from "../hooks/useCategory";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaCog, FaBolt, FaLeaf, FaLightbulb, FaStar, FaPaintBrush, FaTruck, FaTree, FaUserFriends } from "react-icons/fa";
 
 function Home() {
+  const { categories, fetchCategories } = useCategory();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   return (
     <div className="home w-full">
 
@@ -10,6 +20,7 @@ function Home() {
 
       <TrustedBy />
 
+      {/* Trending Workers */}
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6">
@@ -19,6 +30,7 @@ function Home() {
         </div>
       </section>
 
+      {/* Benefits Section */}
       <section className="bg-green-50 py-20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
 
@@ -26,7 +38,6 @@ function Home() {
             <h2 className="text-3xl font-semibold text-gray-800">
               Skilled workers at your fingertips
             </h2>
-
             {[
               {
                 title: "Affordable hiring",
@@ -47,7 +58,7 @@ function Home() {
             ].map((item, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 text-gray-700 font-medium text-lg">
-                  <img src="/img/check.png" alt="" className="w-6 h-6" />
+                  <img src="../hitler.jpg" alt="" className="w-6 h-6" />
                   {item.title}
                 </div>
                 <p className="text-gray-500 text-base leading-7">{item.desc}</p>
@@ -57,7 +68,7 @@ function Home() {
 
           <div className="flex-1">
             <video
-              src="/img/video.mp4"
+              src="../hail.mp4"
               controls
               className="w-full rounded-lg shadow-xl"
             />
@@ -65,49 +76,61 @@ function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      {/* UPDATED CATEGORY SECTION WITH ICONS */}
+      <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl text-gray-800 font-semibold mb-12 text-center">
             Explore Job Categories
           </h2>
 
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {categories.length === 0 ? (
+              <p className="text-gray-500 text-center col-span-full">
+                Loading categories...
+              </p>
+            ) : (
+              categories.map((cat) => {
+                const getIcon = (name: string) => {
+                  const lower = name.toLowerCase();
+                  if (lower.includes("construction")) return <FaCog />;
+                  if (lower.includes("plumbing")) return <FaBolt />;
+                  if (lower.includes("cleaning")) return <FaLeaf />;
+                  if (lower.includes("electrician")) return <FaLightbulb />;
+                  if (lower.includes("welding")) return <FaStar />;
+                  if (lower.includes("painting")) return <FaPaintBrush />;
+                  if (lower.includes("driving")) return <FaTruck />;
+                  if (lower.includes("farming")) return <FaTree />;
+                  return <FaUserFriends />; // default icon
+                };
 
-            {[
-              "Construction",
-              "House Cleaning",
-              "Plumbing",
-              "Electricians",
-              "Welding",
-              "Painting",
-              "Farming & Fieldwork",
-              "Driving & Delivery",
-              "Repairs",
-              "General Labor"
-            ].map((name, index) => (
-              <div
-                key={index}
-                className="w-52 h-36 flex flex-col items-center justify-center text-center cursor-pointer bg-gray-50 rounded-xl p-4 hover:shadow-xl transition group"
-              >
-                <img
-                  src="https://via.placeholder.com/55"
-                  alt={name}
-                  className="w-12 h-12 mb-2 opacity-70 group-hover:opacity-100 transition"
-                />
-
-                <div className="w-12 h-0.5 bg-gray-300 group-hover:w-20 group-hover:bg-green-600 transition-all duration-300 mb-2"></div>
-
-                <span className="text-gray-700 font-medium">{name}</span>
-              </div>
-            ))}
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/categories/${cat.id}/gigs`}
+                    className="bg-gray-50 flex flex-col items-center justify-center text-center p-6 rounded-xl shadow hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-105"
+                  >
+                    <div className="w-16 h-16 flex items-center justify-center text-3xl text-green-600 mb-4">
+                      {getIcon(cat.name)}
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-700">{cat.name}</h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {cat.gigs?.length || 0} gigs
+                    </p>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
 
+      {/* WorkHub Section */}
       <section className="bg-[#0b1536] py-24 text-white">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
           <div className="flex-1 flex flex-col gap-6">
-            <h2 className="text-4xl font-semibold">Gigz <span className="font-light">WorkHub</span></h2>
+            <h2 className="text-4xl font-semibold">
+              Gigz <span className="font-light">WorkHub</span>
+            </h2>
             <h3 className="text-3xl md:text-4xl font-semibold mb-4">
               A hiring solution built for <span className="font-light">real work</span>
             </h3>
@@ -123,19 +146,19 @@ function Home() {
               "Coordinate, communicate, and manage hires effortlessly"
             ].map((text, i) => (
               <div key={i} className="flex items-center gap-3 text-white text-sm">
-                <img src="/img/check.png" alt="" className="w-6 h-6" />
+                <img src="../hitler.jpg" alt="" className="w-6 h-6" />
                 {text}
               </div>
             ))}
 
-            <button className="bg-green-500 text-white px-6 py-3 rounded-md mt-6 hover:bg-green-600 transition">
+            <Link to="/gigs/hub" className="inline-block bg-green-500 text-white px-6 py-3 rounded-md mt-6 hover:bg-green-600 transition text-center">
               Explore Gigz WorkHub
-            </button>
+            </Link>
           </div>
 
           <div className="flex-1">
             <img
-              src="https://via.placeholder.com/850x420"
+              src="../hero.png"
               alt="Gigz WorkHub"
               className="w-full rounded-lg shadow-xl"
             />

@@ -12,6 +12,8 @@ import { AddGigPage } from "../pages/AddGigPage";
 import { EditGigPage } from "../pages/EditGigPage";
 import { GigDetailsPage } from "../pages/GigDetailsPage";
 import { OrderListPage } from "../pages/OrderListPage";
+import CategoryGigsPage from "../pages/CategoryGigsPage";
+import GigzWorkHubPage from "../pages/GigzWorkHubPage";
 
 const AppRoutes = () => {
   return (
@@ -23,10 +25,12 @@ const AppRoutes = () => {
       <Route path="/categories" element={<CategoryList />} />
       <Route path="/categories/add" element={<AddCategoryPage />} />
       <Route path="/categories/edit/:id" element={<EditCategoryPage />} />
+       <Route path="/categories/:id/gigs" element={<CategoryGigsPage />} />
       <Route path="/gigs" element={<GigListPage />} />
       <Route path="/gigs/add" element={<AddGigPage />} />
       <Route path="/gigs/edit/:gigId" element={<EditGigPage />} />
       <Route path="/gigs/:id" element={<GigDetailsPage />} />
+      <Route path="/gigs/hub" element={<GigzWorkHubPage />} />
       <Route path="/orders" element={<OrderListPage />} />
     </Routes>
   );

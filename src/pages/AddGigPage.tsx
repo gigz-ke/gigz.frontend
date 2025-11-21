@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export const AddGigPage: React.FC = () => {
   const { createGig } = useGigs();
-  const { categories, fetchCategories } = useCategory();
+  const { categories, fetchCategories, addGigToCategory } = useCategory();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -92,17 +92,26 @@ export const AddGigPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.sellerId) return alert("You must be logged in to create a gig.");
-    try {
-      await createGig(form);
-      alert("Gig created successfully!");
-      navigate("/gigs");
-    } catch (error) {
-      console.error("Error creating gig:", error);
-      alert("Failed to create gig. See console for details.");
-    }
-  };
+  e.preventDefault();
+
+  if (!form.sellerId) {
+    alert("You must be logged in to create a gig.");
+    return;
+  }
+
+  try {
+    const createdGig = await createGig(form);
+
+    await addGigToCategory(form.category, createdGig._id);
+
+    alert("Gig created successfully!");
+    navigate("/gigs");
+  } catch (error) {
+    console.error("Error creating gig:", error);
+    alert("Failed to create gig. See console for details.");
+  }
+};
+
 
   if (loading || !user) return (
     <div className="w-full min-h-screen flex items-center justify-center">

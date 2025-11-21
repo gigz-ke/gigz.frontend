@@ -49,10 +49,11 @@ function Navbar() {
 
   return (
     <div
-      className={`sticky top-0 z-50 transition-all duration-500 shadow-sm ${active || pathname !== "/"
+      className={`sticky top-0 z-50 transition-all duration-500 shadow-sm ${
+        active || pathname !== "/"
           ? "bg-white text-black"
           : "bg-[#013914] text-white"
-        }`}
+      }`}
     >
       {/* Container */}
       <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 py-5">
@@ -79,7 +80,10 @@ function Navbar() {
               onClick={() => setOpen(!open)}
             >
               <img
-                src={user.img || "https://images.pexels.com/photos/1115697/pexels-photo-1115697.jpeg?auto=compress&cs=tinysrgb&w=1600"}
+                src={
+                  user.img ||
+                  "https://images.pexels.com/photos/1115697/pexels-photo-1115697.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                }
                 alt={user.username}
                 className="w-9 h-9 rounded-full object-cover border-2 border-[#1dbf73]"
               />
@@ -91,7 +95,10 @@ function Navbar() {
                   <div className="bg-linear-to-r from-[#013914] to-[#1dbf73] text-white p-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={user.img || "https://images.pexels.com/photos/1115697/pexels-photo-1115697.jpeg?auto=compress&cs=tinysrgb&w=1600"}
+                        src={
+                          user.img ||
+                          "https://images.pexels.com/photos/1115697/pexels-photo-1115697.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                        }
                         alt={user.username}
                         className="w-12 h-12 rounded-full object-cover border-2 border-white"
                       />
@@ -159,18 +166,16 @@ function Navbar() {
             </div>
           ) : !loading ? (
             <>
-              <Link
-                to="/login"
-                className="hover:text-[#1dbf73] transition"
-              >
+              <Link to="/login" className="hover:text-[#1dbf73] transition">
                 Sign in
               </Link>
               <Link to="/join">
                 <button
-                  className={`px-5 py-2.5 rounded-lg border-2 font-semibold transition-all duration-300 ${active || pathname !== "/"
+                  className={`px-5 py-2.5 rounded-lg border-2 font-semibold transition-all duration-300 ${
+                    active || pathname !== "/"
                       ? "border-[#1dbf73] text-[#1dbf73] bg-white hover:bg-[#1dbf73] hover:text-white"
                       : "border-white text-white hover:bg-[#1dbf73] hover:border-[#1dbf73]"
-                    }`}
+                  }`}
                 >
                   Join Now
                 </button>
@@ -190,7 +195,7 @@ function Navbar() {
             {categories.map((cat) => (
               <Link
                 key={cat.id}
-                to={`/category/${cat.name.toLowerCase()}`}
+                to={`/categories/${cat.id}/gigs`}
                 className="hover:text-[#1dbf73] transition"
               >
                 {cat.name}
