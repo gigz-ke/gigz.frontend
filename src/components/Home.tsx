@@ -118,19 +118,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Projects Slide */}
-      <section className="py-12 overflow-x-auto scrollbar-hide bg-gray-50">
-        <div className="flex gap-6 max-w-7xl mx-auto px-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="min-w-[300px] bg-white rounded-lg p-4 cursor-pointer shadow hover:shadow-lg transition">
-              <img src="https://via.placeholder.com/300x200" alt={`Project ${index + 1}`} className="w-full h-48 object-cover rounded-md mb-2" />
-              <h3 className="text-lg font-medium">Project {index + 1}</h3>
-              <p className="text-gray-500 font-light text-sm mt-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
     </div>
   );
 }

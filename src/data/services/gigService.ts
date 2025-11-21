@@ -15,6 +15,11 @@ export const GigService = {
     return response.data;
   },
 
+  async getBySellerId(sellerId: string): Promise<Gig[]> {
+    const response = await axios.get<Gig[]>(`${API_URL}/seller/${sellerId}`);
+    return response.data;
+  },
+
   async create(data: CreateGigDTO): Promise<Gig> {
     const response = await axios.post<Gig>(API_URL, data);
     return response.data;

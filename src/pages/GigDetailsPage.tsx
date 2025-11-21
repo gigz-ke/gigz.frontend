@@ -6,7 +6,8 @@ import { useCategory } from "../hooks/useCategory";
 import type { Gig } from "../data/models/Gig";
 import type { User } from "../data/models/User";
 import Slider from "../components/Slider";
-import { getUserById } from "../data/services/userService";
+import { getUserByEmail } from "../data/services/userService";
+import { MdEmail, MdPhone } from "react-icons/md"; // React icons
 
 export const GigDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,14 +18,13 @@ export const GigDetailsPage: React.FC = () => {
   const [gig, setGig] = useState<Gig | null>(null);
   const [seller, setSeller] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sellerLoading, setSellerLoading] = useState(false);
+  const [, setSellerLoading] = useState(false);
+  const [showContact, setShowContact] = useState(false);
 
-  // Fetch gigs if not loaded
   useEffect(() => {
     if (!gigs.length) fetchGigs();
   }, []);
 
-  // Set gig based on ID once gigs are loaded
   useEffect(() => {
     if (id && gigs.length) {
       const found = gigs.find((g) => g._id === id);
@@ -33,13 +33,12 @@ export const GigDetailsPage: React.FC = () => {
     }
   }, [id, gigs]);
 
-  // Fetch seller info when gig is available
   useEffect(() => {
     const fetchSeller = async () => {
       if (gig?.sellerId) {
         try {
           setSellerLoading(true);
-          const data = await getUserById(gig.sellerId);
+          const data = await getUserByEmail(gig.sellerId);
           setSeller(data);
         } catch (err) {
           console.error("Failed to fetch seller:", err);
@@ -111,32 +110,67 @@ export const GigDetailsPage: React.FC = () => {
       {/* Right Column (Sticky) */}
       <div className="flex-1 border border-gray-200 rounded-lg p-4 h-max sticky top-24 flex flex-col gap-4">
         {/* Seller Box */}
-        {sellerLoading && <p className="text-gray-400">Loading seller info...</p>}
-        {seller && (
-          <div className="border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">About The Seller</h2>
-            <div className="flex items-center gap-4">
-              <img
-                src={seller.img || "/img/default-pp.png"}
-                alt={seller.username}
-                className="w-20 h-20 rounded-full object-cover"
-              />
-              <div className="flex flex-col gap-2">
-                <span className="font-medium">{seller.username}</span>
-                <button className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100">
-                  Contact Me
-                </button>
-              </div>
+        <div className="border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
+          <h2 className="text-lg font-semibold">About The Seller</h2>
+
+          <div className="flex items-center gap-4">
+            <img
+              src={seller?.img || "/img/default-pp.png"}
+              alt={seller?.username}
+              className="w-20 h-20 rounded-full object-cover shadow-sm"
+            />
+
+            <div className="flex flex-col gap-1">
+              <span className="font-medium text-lg">{seller?.username}</span>
+
+              {/* Contact Me Toggle */}
+              <button
+                onClick={() => setShowContact((prev) => !prev)}
+                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+              >
+                {showContact ? "Hide Contact" : "Contact Me"}
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-500">
-              <div>
-                <span className="font-light">From</span>
-                <p>{seller.country || "Unknown"}</p>
-              </div>
-            </div>
-            {seller.desc && <p className="text-gray-600 mt-2">{seller.desc}</p>}
           </div>
-        )}
+
+          {/* Location */}
+          <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-500">
+            <div>
+              <span className="font-light">From</span>
+              <p className="font-medium text-gray-700">{seller?.country || "Unknown"}</p>
+            </div>
+          </div>
+
+          {/* Seller Bio */}
+          {seller?.desc && (
+            <p className="text-gray-600 mt-2 leading-relaxed">{seller.desc}</p>
+          )}
+
+          {/* Elegant Contact Card */}
+          {showContact && (
+            <div className="mt-4 p-5 border border-gray-200 rounded-xl bg-white shadow-sm flex flex-col gap-4">
+              <h3 className="font-semibold text-gray-800 text-lg">Contact Information</h3>
+
+              {/* Phone */}
+              <div className="flex items-center gap-3">
+                <MdPhone className="text-green-600 w-6 h-6" />
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500">Phone</span>
+                  <span className="font-medium">{seller?.phone || "No phone available"}</span>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex items-center gap-3">
+                <MdEmail className="text-blue-600 w-6 h-6" />
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500">Email</span>
+                  <span className="font-medium">{seller?.email}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Gig Purchase Box */}
         <div className="flex flex-col gap-4">

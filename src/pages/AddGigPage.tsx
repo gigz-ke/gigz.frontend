@@ -33,8 +33,14 @@ export const AddGigPage: React.FC = () => {
 
   useEffect(() => { fetchCategories(); }, [fetchCategories]);
   useEffect(() => { if (!loading && !user) navigate("/login"); }, [loading, user, navigate]);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { if (user) { const userId = user._id; if (userId) setForm(prev => ({ ...prev, sellerId: userId })); else console.error(user); } }, [user]);
+  useEffect(() => {
+    if (user) {
+      const email = user.email;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (email) setForm(prev => ({ ...prev, sellerId: email }));
+      else console.error("User email missing:", user);
+    }
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

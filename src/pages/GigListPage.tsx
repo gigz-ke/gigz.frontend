@@ -1,16 +1,14 @@
-// src/pages/gigs/GigListPage.tsx
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useGigs } from "../hooks/useGigs";
 import { useCategory } from "../hooks/useCategory";
 
 export const GigListPage: React.FC = () => {
-  const { gigs, fetchGigs, deleteGig } = useGigs();
+  const { myGigs, deleteGig } = useGigs(); // use myGigs for logged-in seller
   const { categories, fetchCategories } = useCategory();
 
   useEffect(() => {
-    fetchGigs();
     fetchCategories();
-  }, [fetchGigs, fetchCategories]);
+  }, [fetchCategories]);
 
   // Map category ID to name for quick lookup
   const categoryMap = useMemo(() => {
@@ -41,13 +39,13 @@ export const GigListPage: React.FC = () => {
         </div>
 
         {/* Empty State */}
-        {gigs.length === 0 ? (
+        {myGigs.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center text-gray-600">
             <p className="text-lg">No gigs found. Click "Add Gig" to create one.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {gigs.map((gig) => (
+            {myGigs.map((gig) => (
               <div
                 key={gig._id}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition flex flex-col"
