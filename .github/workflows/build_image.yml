@@ -24,6 +24,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          tags: ${{ secrets.DOCKER_USERNAME }}/gigz-frontend:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gigz-frontend:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gigz-frontend:buildcache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/gigz:fronted
