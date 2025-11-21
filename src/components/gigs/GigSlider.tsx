@@ -85,30 +85,9 @@ export default function GigsSlider() {
   const handleTouchMove = (e: React.TouchEvent) => handleDragMove(e.touches[0].clientX);
   const handleTouchEnd = handleDragEnd;
 
-  // Arrow scroll
-  const scrollByAmount = (amount: number) => {
-    if (!sliderRef.current) return;
-    sliderRef.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
-
   return (
     <div className="relative w-full py-4">
-      {/* Left Arrow */}
-      <button
-        onClick={() => scrollByAmount(-300)}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow hover:bg-gray-100 transition"
-      >
-        &#8592;
-      </button>
-
-      {/* Right Arrow */}
-      <button
-        onClick={() => scrollByAmount(300)}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow hover:bg-gray-100 transition"
-      >
-        &#8594;
-      </button>
-
+      
       {/* Slider */}
       <div
         ref={sliderRef}

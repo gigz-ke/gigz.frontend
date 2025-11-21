@@ -3,23 +3,30 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGigs } from "../hooks/useGigs";
 import { useCategory } from "../hooks/useCategory";
+import { useAuth } from "../hooks/useAuth";
 import type { Gig } from "../data/models/Gig";
 import type { User } from "../data/models/User";
+import type { CreateOrderRequest } from "../data/models/Order";
 import Slider from "../components/Slider";
 import { getUserByEmail } from "../data/services/userService";
 import { MdEmail, MdPhone } from "react-icons/md"; // React icons
+import { OrderService } from "../data/services/orderService";
 
 export const GigDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { gigs, fetchGigs } = useGigs();
   const { categories } = useCategory();
+  const { user } = useAuth();
 
   const [gig, setGig] = useState<Gig | null>(null);
   const [seller, setSeller] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [, setSellerLoading] = useState(false);
   const [showContact, setShowContact] = useState(false);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!gigs.length) fetchGigs();
@@ -72,6 +79,38 @@ export const GigDetailsPage: React.FC = () => {
 
   const allImages = [gig.coverImage, ...(gig.images || [])].filter(Boolean);
 
+  const handleContinueClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmOrder = async () => {
+    if (!gig || !user) return;
+
+    const orderPayload: CreateOrderRequest = {
+      gigId: gig._id,
+      buyerId: user.email,
+      sellerId: gig.sellerId,
+      price: gig.price,
+    };
+
+    try {
+      await OrderService.create(orderPayload);
+      alert("Order created successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create order");
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleCancelModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // New logic: disable only if logged-in user is a seller AND is the gig seller
+  const isContinueDisabled = user?.isSeller && user.email === gig?.sellerId;
+
   return (
     <div className="max-w-[1400px] mx-auto p-6 flex flex-col md:flex-row gap-6">
       {/* Left Column */}
@@ -123,7 +162,6 @@ export const GigDetailsPage: React.FC = () => {
             <div className="flex flex-col gap-1">
               <span className="font-medium text-lg">{seller?.username}</span>
 
-              {/* Contact Me Toggle */}
               <button
                 onClick={() => setShowContact((prev) => !prev)}
                 className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-100 transition"
@@ -142,16 +180,13 @@ export const GigDetailsPage: React.FC = () => {
           </div>
 
           {/* Seller Bio */}
-          {seller?.desc && (
-            <p className="text-gray-600 mt-2 leading-relaxed">{seller.desc}</p>
-          )}
+          {seller?.desc && <p className="text-gray-600 mt-2 leading-relaxed">{seller.desc}</p>}
 
-          {/* Elegant Contact Card */}
+          {/* Contact Card */}
           {showContact && (
             <div className="mt-4 p-5 border border-gray-200 rounded-xl bg-white shadow-sm flex flex-col gap-4">
               <h3 className="font-semibold text-gray-800 text-lg">Contact Information</h3>
 
-              {/* Phone */}
               <div className="flex items-center gap-3">
                 <MdPhone className="text-green-600 w-6 h-6" />
                 <div className="flex flex-col">
@@ -160,7 +195,6 @@ export const GigDetailsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Email */}
               <div className="flex items-center gap-3">
                 <MdEmail className="text-blue-600 w-6 h-6" />
                 <div className="flex flex-col">
@@ -204,9 +238,39 @@ export const GigDetailsPage: React.FC = () => {
             </div>
           )}
 
-          <button className="bg-green-600 text-white py-2 text-lg font-medium rounded-md mt-4 hover:bg-green-700">
+          {/* Continue Button */}
+          <button
+            disabled={isContinueDisabled}
+            onClick={handleContinueClick}
+            className={`bg-green-600 text-white py-2 text-lg font-medium rounded-md mt-4 w-full ${
+              isContinueDisabled ? "cursor-not-allowed bg-gray-400" : "hover:bg-green-700"
+            }`}
+          >
             Continue
           </button>
+
+          {/* Modal */}
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-translucent bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-xl shadow-lg w-80 text-center space-y-4">
+                <p>Are you sure you want to create an order for this gig?</p>
+                <div className="flex justify-between gap-3">
+                  <button
+                    onClick={handleCancelModal}
+                    className="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmOrder}
+                    className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.tsx'
 import { CategoryProvider } from './context/CategoryProvider.tsx'
 import { GigProvider } from './context/GigProvider.tsx'
+import { OrderProvider } from './context/OrderProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <CategoryProvider>
           <GigProvider>
-          <App />
+            <OrderProvider>
+              <App />
+            </OrderProvider>
           </GigProvider>
         </CategoryProvider>
       </BrowserRouter>
