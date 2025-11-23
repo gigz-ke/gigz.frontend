@@ -37,7 +37,7 @@ export const EditGigPage: React.FC = () => {
   // Fetch categories
   useEffect(() => { fetchCategories(); }, [fetchCategories]);
 
-  // Fetch gig
+  // Fetch gig and check auth
   useEffect(() => {
     const fetchGig = async () => {
       if (authLoading) return;
@@ -48,8 +48,15 @@ export const EditGigPage: React.FC = () => {
         setIsLoading(true);
         const gig = await getGigById(gigId);
         if (!gig) { alert("Gig not found"); navigate("/gigs"); return; }
-        if (gig.sellerId !== user._id) { alert("Not authorized"); navigate("/gigs"); return; }
 
+        // AUTHORIZATION: Check if logged-in user's email matches seller email
+        if (gig.sellerId && user.email !== gig.sellerId) {
+          alert("Unauthorized access");
+          navigate("/gigs");
+          return;
+        }
+
+        // Populate form
         setForm({
           sellerId: gig.sellerId,
           title: gig.title,
@@ -77,11 +84,12 @@ export const EditGigPage: React.FC = () => {
     fetchGig();
   }, [gigId, user, authLoading, navigate, getGigById]);
 
+  // Form handlers (unchanged)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
-      [name]: name === "price" || name === "deliveryTime" || name === "revisionNumber" ? Number(value) : value,
+      [name]: ["price", "deliveryTime", "revisionNumber"].includes(name) ? Number(value) : value,
     }));
   };
 
@@ -128,8 +136,14 @@ export const EditGigPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sellerId) { alert("User not logged in"); return; }
-    try { await updateGig(gigId!, form); alert("Gig updated successfully!"); navigate("/gigs"); } 
-    catch (err) { console.error(err); alert("Failed to update gig."); }
+    try {
+      await updateGig(gigId!, form);
+      alert("Gig updated successfully!");
+      navigate("/gigs");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update gig.");
+    }
   };
 
   if (authLoading || isLoading) return (
@@ -139,30 +153,30 @@ export const EditGigPage: React.FC = () => {
   );
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex justify-center py-16 px-4">
-      <div className="w-full max-w-7xl bg-white p-12 rounded-2xl shadow-lg">
+    <div className="w-full min-h-screen bg-gray-50 flex justify-center py-12 px-4">
+      <div className="w-full max-w-7xl bg-white p-8 md:p-12 rounded-2xl shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-green-900 mb-8">Edit Gig</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-10">
 
-          {/* Info Section */}
+        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-8 md:gap-10">
+          {/* Left: Main Info */}
           <div className="flex-1 flex flex-col gap-6">
             <label className="text-gray-500 font-semibold">Title</label>
-            <input type="text" name="title" value={form.title} onChange={handleChange} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600" required />
+            <input type="text" name="title" value={form.title} onChange={handleChange} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 w-full" required />
 
             <label className="text-gray-500 font-semibold">Category</label>
-            <select name="category" value={form.category} onChange={handleChange} className="border p-4 rounded-lg cursor-pointer focus:ring-2 focus:ring-green-600" required>
+            <select name="category" value={form.category} onChange={handleChange} className="border p-4 rounded-lg cursor-pointer focus:ring-2 focus:ring-green-600 w-full" required>
               <option value="">Select Category</option>
               {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
 
             <label className="text-gray-500 font-semibold">Cover Image</label>
-            <input type="file" accept="image/*" onChange={handleCoverChange} className="cursor-pointer text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-green-600 file:bg-opacity-10 file:text-green-700 hover:file:bg-opacity-20 transition" />
+            <input type="file" accept="image/*" onChange={handleCoverChange} className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-green-600 file:bg-opacity-10 file:text-green-700 hover:file:bg-opacity-20 cursor-pointer" />
             {coverPreview && <img src={coverPreview} alt="Cover" className="mt-3 w-full h-64 object-cover rounded-lg border shadow" />}
 
             <label className="text-gray-500 font-semibold">Upload Images</label>
-            <input type="file" accept="image/*" multiple onChange={handleImagesChange} className="cursor-pointer text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-green-600 file:bg-opacity-10 file:text-green-700 hover:file:bg-opacity-20 transition" />
+            <input type="file" accept="image/*" multiple onChange={handleImagesChange} className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-green-600 file:bg-opacity-10 file:text-green-700 hover:file:bg-opacity-20 cursor-pointer" />
             {imagesPreview.length > 0 && (
-              <div className="mt-3 grid grid-cols-2 gap-2 max-h-80 overflow-auto">
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-80 overflow-y-auto">
                 {imagesPreview.map((img, idx) => (
                   <div key={idx} className="relative">
                     <img src={img} alt={`Preview ${idx}`} className="w-full h-32 object-cover rounded-lg border shadow" />
@@ -173,22 +187,22 @@ export const EditGigPage: React.FC = () => {
             )}
 
             <label className="text-gray-500 font-semibold">Full Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={6} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 resize-none" />
+            <textarea name="description" value={form.description} onChange={handleChange} rows={6} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 resize-none w-full" />
           </div>
 
-          {/* Details Section */}
+          {/* Right: Details */}
           <div className="flex-1 flex flex-col gap-6">
             <label className="text-gray-500 font-semibold">Service Title</label>
-            <input type="text" name="serviceTitle" value={form.serviceTitle} onChange={handleChange} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600" />
+            <input type="text" name="serviceTitle" value={form.serviceTitle} onChange={handleChange} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 w-full" />
 
             <label className="text-gray-500 font-semibold">Short Description</label>
-            <textarea name="shortDescription" value={form.shortDescription} onChange={handleChange} rows={3} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 resize-none" />
+            <textarea name="shortDescription" value={form.shortDescription} onChange={handleChange} rows={3} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 resize-none w-full" />
 
             <label className="text-gray-500 font-semibold">Delivery Time (days)</label>
-            <input type="number" name="deliveryTime" value={form.deliveryTime} onChange={handleChange} min={1} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600" />
+            <input type="number" name="deliveryTime" value={form.deliveryTime} onChange={handleChange} min={1} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 w-full" />
 
             <label className="text-gray-500 font-semibold">Revision Number</label>
-            <input type="number" name="revisionNumber" value={form.revisionNumber} onChange={handleChange} min={0} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600" />
+            <input type="number" name="revisionNumber" value={form.revisionNumber} onChange={handleChange} min={0} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 w-full" />
 
             <label className="text-gray-500 font-semibold">Features</label>
             <div className="flex gap-2 mb-2">
@@ -205,11 +219,12 @@ export const EditGigPage: React.FC = () => {
             </div>
 
             <label className="text-gray-500 font-semibold">Price ($)</label>
-            <input type="number" name="price" value={form.price} onChange={handleChange} min={0} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600" />
+            <input type="number" name="price" value={form.price} onChange={handleChange} min={0} className="border p-4 rounded-lg outline-none focus:ring-2 focus:ring-green-600 w-full" />
 
-            <button type="submit" className="mt-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition active:scale-95">Update Gig</button>
+            <button type="submit" className="mt-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition active:scale-95 w-full md:w-auto">
+              Update Gig
+            </button>
           </div>
-
         </form>
       </div>
     </div>

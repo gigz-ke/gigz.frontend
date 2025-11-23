@@ -46,29 +46,29 @@ const GigzWorkHubPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Gigz WorkHub</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Gigz WorkHub</h1>
 
         {/* Search bar */}
-        <div className="relative w-full md:w-1/3">
+        <div className="relative w-full sm:w-1/3">
           <input
             type="text"
             placeholder="Search for gigs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full border border-gray-300 rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base"
           />
           <FaSearch className="absolute right-3 top-2.5 text-gray-400" />
         </div>
       </div>
 
       {/* Category filters */}
-      <div className="flex flex-wrap gap-3 mb-8">
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
         <button
           onClick={() => setSelectedCategory(null)}
-          className={`px-4 py-2 rounded-full border transition ${
+          className={`px-3 sm:px-4 py-2 rounded-full border text-sm sm:text-base transition ${
             !selectedCategory
               ? "bg-green-500 text-white border-green-500"
               : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-50"
@@ -81,7 +81,7 @@ const GigzWorkHubPage: React.FC = () => {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full border transition ${
+            className={`px-3 sm:px-4 py-2 rounded-full border text-sm sm:text-base transition ${
               selectedCategory?.id === cat.id
                 ? "bg-green-500 text-white border-green-500"
                 : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-50"
@@ -100,7 +100,7 @@ const GigzWorkHubPage: React.FC = () => {
           No gigs found. Try a different category or search term.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredGigs.map((gig) => (
             <GigCard key={gig._id} gig={gig} categoryName={getCategoryName(gig)} />
           ))}
