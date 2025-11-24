@@ -7,7 +7,7 @@ import TrustedBy from "./TrustedBy";
 import GigsSlider from "./gigs/GigSlider";
 import { useCategory } from "../hooks/useCategory";
 
-const featureIcon = "/feature-icon.png"; // placeholder icon
+const featureIcon = "/hero.png"; 
 
 function Home() {
   const { categories, fetchCategories } = useCategory();
@@ -84,7 +84,7 @@ function Home() {
           {/* Right Video */}
           <div className="flex-1">
             <video
-              src="/hail.mp4"
+              src="/hero.png"
               controls
               className="w-full rounded-lg shadow-xl"
             />
