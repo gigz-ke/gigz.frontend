@@ -25,4 +25,5 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/386
           tags: ${{ secrets.DOCKER_USERNAME }}/gigz:frontend
