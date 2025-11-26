@@ -16,9 +16,10 @@ export const GigProvider: React.FC<GigProviderProps> = ({ children }) => {
   const fetchGigs = useCallback(async () => {
     try {
       const data = await GigService.getAll();
-      setGigs(data);
+      setGigs(Array.isArray(data) ? data : []); // ← ADD THIS CHECK
     } catch (error) {
       console.error("Failed to fetch all gigs:", error);
+      setGigs([]); // ← ADD THIS
     }
   }, []);
 
@@ -26,9 +27,10 @@ export const GigProvider: React.FC<GigProviderProps> = ({ children }) => {
     if (!user?.email) return;
     try {
       const data = await GigService.getBySellerId(user.email);
-      setMyGigs(data);
+      setMyGigs(Array.isArray(data) ? data : []); // ← ADD THIS CHECK
     } catch (error) {
       console.error("Failed to fetch my gigs:", error);
+      setMyGigs([]); // ← ADD THIS
     }
   }, [user]);
 
